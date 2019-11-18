@@ -12,12 +12,12 @@ class DeviceScreen extends StatelessWidget {
   final BluetoothDevice device;
 
   List<int> _getRandomBytes() {
-    final Random math = Random();
-    return [
-      math.nextInt(255),
-      math.nextInt(255),
-      math.nextInt(255),
-      math.nextInt(255)
+    final Random random = Random();
+    return <int>[
+      random.nextInt(255),
+      random.nextInt(255),
+      random.nextInt(255),
+      random.nextInt(255)
     ];
   }
 
@@ -87,10 +87,7 @@ class DeviceScreen extends StatelessWidget {
                 onPressed: onPressed,
                 child: Text(
                   text,
-                  style: Theme.of(context)
-                      .primaryTextTheme
-                      .button
-                      .copyWith(color: Colors.white),
+                  style: _buildTextStyle(context),
                 ),
               );
             },
@@ -112,7 +109,8 @@ class DeviceScreen extends StatelessWidget {
                     ? Icon(Icons.bluetooth_connected)
                     : Icon(Icons.bluetooth_disabled),
                 title: Text(
-                    'Device is ${snapshot.data.toString().split('.')[1]}.',),
+                  'Device is ${snapshot.data.toString().split('.')[1]}.',
+                ),
                 subtitle: Text('${device.id}'),
                 trailing: StreamBuilder<bool>(
                   stream: device.isDiscoveringServices,
@@ -176,5 +174,12 @@ class DeviceScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  TextStyle _buildTextStyle(BuildContext context) {
+    return Theme.of(context)
+        .primaryTextTheme
+        .button
+        .copyWith(color: Colors.white);
   }
 }
