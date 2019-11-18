@@ -1,5 +1,6 @@
 import 'package:flutter_blue/flutter_blue.dart';
 
+/// Offers various bluetooth-related debug-messages
 void debugLog(String message) {
   String _printMarker = '';
   for (int i = 0; i < message.length; i++) {
