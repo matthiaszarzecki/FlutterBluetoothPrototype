@@ -5,8 +5,8 @@
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_blue_example/bluetooth_off_screen.dart';
-import 'package:flutter_blue_example/find_devices_screen.dart';
+import 'package:my_bluetooth_prototype/bluetooth_off_screen.dart';
+import 'package:my_bluetooth_prototype/find_devices_screen.dart';
 
 void main() {
   runApp(FlutterBlueApp());

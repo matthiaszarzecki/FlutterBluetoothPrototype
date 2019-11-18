@@ -2,9 +2,9 @@ import 'dart:math';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_blue_example/characteristic_tile.dart';
-import 'package:flutter_blue_example/service_tile.dart';
-import 'package:flutter_blue_example/widgets.dart';
+import 'package:my_bluetooth_prototype/characteristic_tile.dart';
+import 'package:my_bluetooth_prototype/descriptor_tile.dart';
+import 'package:my_bluetooth_prototype/service_tile.dart';
 
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key key, this.device}) : super(key: key);
