@@ -1,7 +1,8 @@
-import 'package:flutter_blue_example/main.dart';
-import 'package:flutter_blue_example/widgets.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_blue_example/device_screen.dart';
+import 'package:flutter_blue_example/scan_result_tile.dart';
 
 class FindDevicesScreen extends StatelessWidget {
   @override
@@ -11,13 +12,14 @@ class FindDevicesScreen extends StatelessWidget {
         title: Text('Find Devices'),
       ),
       body: RefreshIndicator(
-        onRefresh: () =>
-            FlutterBlue.instance.startScan(timeout: Duration(seconds: 4),),
+        onRefresh: () => FlutterBlue.instance.startScan(
+          timeout: Duration(seconds: 4),
+        ),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               StreamBuilder<List<BluetoothDevice>>(
-                stream: Stream.periodic(Duration(seconds: 2)).asyncMap(
+                stream: Stream<dynamic>.periodic(Duration(seconds: 2)).asyncMap(
                   (_) => FlutterBlue.instance.connectedDevices,
                 ),
                 initialData: [],
@@ -34,8 +36,9 @@ class FindDevicesScreen extends StatelessWidget {
                                     BluetoothDeviceState.connected) {
                                   return RaisedButton(
                                     child: Text('OPEN'),
-                                    onPressed: () => Navigator.of(context).push(
-                                      MaterialPageRoute(
+                                    onPressed: () =>
+                                        Navigator.of(context).push<dynamic>(
+                                      MaterialPageRoute<dynamic>(
                                         builder: (context) =>
                                             DeviceScreen(device: d),
                                       ),
@@ -57,8 +60,8 @@ class FindDevicesScreen extends StatelessWidget {
                       .map(
                         (r) => ScanResultTile(
                           result: r,
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
+                          onTap: () => Navigator.of(context).push<dynamic>(
+                            MaterialPageRoute<dynamic>(
                               builder: (context) {
                                 r.device.connect();
                                 return DeviceScreen(device: r.device);
