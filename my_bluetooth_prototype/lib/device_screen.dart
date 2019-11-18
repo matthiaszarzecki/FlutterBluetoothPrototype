@@ -6,53 +6,11 @@ import 'package:my_bluetooth_prototype/characteristic_tile.dart';
 import 'package:my_bluetooth_prototype/descriptor_tile.dart';
 import 'package:my_bluetooth_prototype/service_tile.dart';
 
+/// Screen that shows the Bluetooth-Status of a single device/connection
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key key, this.device}) : super(key: key);
 
   final BluetoothDevice device;
-
-  List<int> _getRandomBytes() {
-    final Random random = Random();
-    return <int>[
-      random.nextInt(255),
-      random.nextInt(255),
-      random.nextInt(255),
-      random.nextInt(255)
-    ];
-  }
-
-  List<Widget> _buildServiceTiles(List<BluetoothService> services) {
-    return services
-        .map(
-          (BluetoothService service) => ServiceTile(
-            service: service,
-            characteristicTiles: service.characteristics
-                .map(
-                  (BluetoothCharacteristic characteristic) =>
-                      CharacteristicTile(
-                    characteristic: characteristic,
-                    onReadPressed: () => characteristic.read(),
-                    onWritePressed: () =>
-                        characteristic.write(_getRandomBytes()),
-                    onNotificationPressed: () => characteristic
-                        .setNotifyValue(!characteristic.isNotifying),
-                    descriptorTiles: characteristic.descriptors
-                        .map(
-                          (BluetoothDescriptor descriptor) => DescriptorTile(
-                            descriptor: descriptor,
-                            onReadPressed: () => descriptor.read(),
-                            onWritePressed: () =>
-                                descriptor.write(_getRandomBytes()),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
-                .toList(),
-          ),
-        )
-        .toList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +41,7 @@ class DeviceScreen extends StatelessWidget {
                   text = snapshot.data.toString().substring(21).toUpperCase();
                   break;
               }
+              // Connect / Disconnect Button
               return FlatButton(
                 onPressed: onPressed,
                 child: Text(
@@ -105,13 +64,16 @@ class DeviceScreen extends StatelessWidget {
                 AsyncSnapshot<BluetoothDeviceState> snapshot,
               ) =>
                   ListTile(
+                // Bluetooth active/inactive icon
                 leading: (snapshot.data == BluetoothDeviceState.connected)
                     ? Icon(Icons.bluetooth_connected)
                     : Icon(Icons.bluetooth_disabled),
+                // Device is connected / disconnected text on Device-Page
                 title: Text(
                   'Device is ${snapshot.data.toString().split('.')[1]}.',
                 ),
                 subtitle: Text('${device.id}'),
+                // Refresh/Loading-Button in upper right on device-page
                 trailing: StreamBuilder<bool>(
                   stream: device.isDiscoveringServices,
                   initialData: false,
@@ -174,6 +136,49 @@ class DeviceScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<int> _getRandomBytes() {
+    final Random random = Random();
+    return <int>[
+      random.nextInt(255),
+      random.nextInt(255),
+      random.nextInt(255),
+      random.nextInt(255)
+    ];
+  }
+
+  List<Widget> _buildServiceTiles(List<BluetoothService> services) {
+    return services
+        .map(
+          (BluetoothService service) => ServiceTile(
+            service: service,
+            characteristicTiles: service.characteristics
+                .map(
+                  (BluetoothCharacteristic characteristic) =>
+                      CharacteristicTile(
+                    characteristic: characteristic,
+                    onReadPressed: () => characteristic.read(),
+                    onWritePressed: () =>
+                        characteristic.write(_getRandomBytes()),
+                    onNotificationPressed: () => characteristic
+                        .setNotifyValue(!characteristic.isNotifying),
+                    descriptorTiles: characteristic.descriptors
+                        .map(
+                          (BluetoothDescriptor descriptor) => DescriptorTile(
+                            descriptor: descriptor,
+                            onReadPressed: () => descriptor.read(),
+                            onWritePressed: () =>
+                                descriptor.write(_getRandomBytes()),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+                .toList(),
+          ),
+        )
+        .toList();
   }
 
   TextStyle _buildTextStyle(BuildContext context) {

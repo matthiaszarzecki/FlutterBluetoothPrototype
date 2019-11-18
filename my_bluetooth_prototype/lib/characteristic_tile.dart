@@ -25,7 +25,10 @@ class CharacteristicTile extends StatelessWidget {
     return StreamBuilder<List<int>>(
       stream: characteristic.value,
       initialData: characteristic.lastValue,
-      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<List<int>> snapshot,
+      ) {
         final List<int> value = snapshot.data;
         return ExpansionTile(
           title: ListTile(

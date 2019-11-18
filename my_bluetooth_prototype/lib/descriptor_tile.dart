@@ -32,9 +32,7 @@ class DescriptorTile extends StatelessWidget {
         stream: descriptor.value,
         initialData: descriptor.lastValue,
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) =>
-            Text(
-          snapshot.data.toString()
-        ),
+            Text(snapshot.data.toString()),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -59,8 +57,9 @@ class DescriptorTile extends StatelessWidget {
   }
 
   TextStyle _buildTextStyle(BuildContext context) {
-    return Theme.of(context).textTheme.body1.copyWith(
-          color: Theme.of(context).textTheme.caption.color,
-        );
+    return Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(color: Theme.of(context).textTheme.caption.color);
   }
 }
