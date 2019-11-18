@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -21,18 +20,20 @@ class DescriptorTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('Descriptor'),
-          Text('0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}',
-              style: Theme.of(context)
-                  .textTheme
-                  .body1
-                  .copyWith(color: Theme.of(context).textTheme.caption.color))
+          const Text('Descriptor'),
+          Text(
+            '0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}',
+            style: _buildTextStyle(context),
+          )
         ],
       ),
       subtitle: StreamBuilder<List<int>>(
         stream: descriptor.value,
         initialData: descriptor.lastValue,
-        builder: (c, snapshot) => Text(snapshot.data.toString()),
+        builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) =>
+            Text(
+          snapshot.data.toString(),
+        ),
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -54,5 +55,12 @@ class DescriptorTile extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  TextStyle _buildTextStyle(BuildContext context) {
+    return Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(color: Theme.of(context).textTheme.caption.color);
   }
 }
