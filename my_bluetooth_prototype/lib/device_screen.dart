@@ -76,45 +76,10 @@ class DeviceScreen extends StatelessWidget {
               AsyncSnapshot<BluetoothDeviceState> snapshot,
             ) {
               return ListTile(
-                // Bluetooth active/inactive icon
-                leading: (snapshot.data == BluetoothDeviceState.connected)
-                    ? Icon(Icons.bluetooth_connected)
-                    : Icon(Icons.bluetooth_disabled),
-                // Device is connected / disconnected text on Device-Page
-                title: Text(
-                  'Device is ${snapshot.data.toString().split('.')[1]}.',
-                ),
-                subtitle: Text('${device.id}'),
-                // Refresh/Loading-Button in upper right on device-page
-                trailing: StreamBuilder<bool>(
-                  stream: device.isDiscoveringServices,
-                  initialData: false,
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<bool> snapshot,
-                  ) {
-                    return IndexedStack(
-                      index: snapshot.data ? 1 : 0,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.refresh),
-                          onPressed: () => device.discoverServices(),
-                        ),
-                        IconButton(
-                          icon: SizedBox(
-                            child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.grey),
-                            ),
-                            width: 18.0,
-                            height: 18.0,
-                          ),
-                          onPressed: null,
-                        )
-                      ],
-                    );
-                  },
-                ),
+                leading: _buildBluetoothConnectedDisabledIcon(snapshot),
+                title: _buildDeviceConnectedHeader(snapshot),
+                subtitle: _buildDeviceIDSubtitle(device),
+                trailing: _buildRefreshConnectionButton(),
               );
             },
           ),
@@ -149,6 +114,57 @@ class DeviceScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Icon _buildBluetoothConnectedDisabledIcon(
+    AsyncSnapshot<BluetoothDeviceState> snapshot,
+  ) {
+    return (snapshot.data == BluetoothDeviceState.connected)
+        ? Icon(Icons.bluetooth_connected)
+        : Icon(Icons.bluetooth_disabled);
+  }
+
+  Text _buildDeviceConnectedHeader(
+    AsyncSnapshot<BluetoothDeviceState> snapshot,
+  ) {
+    return Text(
+      'Device is ${snapshot.data.toString().split('.')[1]}.',
+    );
+  }
+
+  Text _buildDeviceIDSubtitle(BluetoothDevice device) {
+    return Text('${device.id}');
+  }
+
+  StreamBuilder<bool> _buildRefreshConnectionButton() {
+    return StreamBuilder<bool>(
+      stream: device.isDiscoveringServices,
+      initialData: false,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<bool> snapshot,
+      ) {
+        return IndexedStack(
+          index: snapshot.data ? 1 : 0,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () => device.discoverServices(),
+            ),
+            IconButton(
+              icon: SizedBox(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                ),
+                width: 18.0,
+                height: 18.0,
+              ),
+              onPressed: null,
+            )
+          ],
+        );
+      },
     );
   }
 
