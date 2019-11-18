@@ -15,6 +15,7 @@ class DescriptorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = Theme.of(context).iconTheme.color.withOpacity(0.5);
     return ListTile(
       title: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +33,7 @@ class DescriptorTile extends StatelessWidget {
         initialData: descriptor.lastValue,
         builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) =>
             Text(
-          snapshot.data.toString(),
+          snapshot.data.toString()
         ),
       ),
       trailing: Row(
@@ -41,14 +42,14 @@ class DescriptorTile extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.file_download,
-              color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+              color: iconColor,
             ),
             onPressed: onReadPressed,
           ),
           IconButton(
             icon: Icon(
               Icons.file_upload,
-              color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+              color: iconColor,
             ),
             onPressed: onWritePressed,
           )
@@ -58,9 +59,8 @@ class DescriptorTile extends StatelessWidget {
   }
 
   TextStyle _buildTextStyle(BuildContext context) {
-    return Theme.of(context)
-        .textTheme
-        .body1
-        .copyWith(color: Theme.of(context).textTheme.caption.color);
+    return Theme.of(context).textTheme.body1.copyWith(
+          color: Theme.of(context).textTheme.caption.color,
+        );
   }
 }
