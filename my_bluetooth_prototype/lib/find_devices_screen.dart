@@ -35,8 +35,10 @@ class FindDevicesScreen extends StatelessWidget {
           // List of Previously Connected Devices
           StreamBuilder<List<BluetoothDevice>>(
             stream:
-                Stream<dynamic>.periodic(const Duration(seconds: 2)).asyncMap(
-              (dynamic _) => FlutterBlue.instance.connectedDevices,
+                Stream<dynamic>.periodic(const Duration(seconds: 2),).asyncMap(
+              (dynamic _) {
+                return FlutterBlue.instance.connectedDevices;
+              },
             ),
             initialData: const <BluetoothDevice>[],
             builder: (
@@ -44,12 +46,11 @@ class FindDevicesScreen extends StatelessWidget {
               AsyncSnapshot<List<BluetoothDevice>> snapshot,
             ) {
               return Column(
-                children: snapshot.data
-                    .map(
-                      (BluetoothDevice device) =>
-                          _buildConnectedDeviceTile(device, context),
-                    )
-                    .toList(),
+                children: snapshot.data.map(
+                  (BluetoothDevice device) {
+                    return _buildConnectedDeviceTile(device, context);
+                  },
+                ).toList(),
               );
             },
           ),
@@ -109,8 +110,9 @@ class FindDevicesScreen extends StatelessWidget {
               child: const Text('OPEN'),
               onPressed: () => Navigator.of(context).push<dynamic>(
                 MaterialPageRoute<dynamic>(
-                  builder: (BuildContext context) =>
-                      DeviceScreen(device: device),
+                  builder: (BuildContext context) {
+                    return DeviceScreen(device: device);
+                  },
                 ),
               ),
             );

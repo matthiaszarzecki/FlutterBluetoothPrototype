@@ -149,36 +149,34 @@ class DeviceScreen extends StatelessWidget {
   }
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
-    return services
-        .map(
-          (BluetoothService service) => ServiceTile(
-            service: service,
-            characteristicTiles: service.characteristics
-                .map(
-                  (BluetoothCharacteristic characteristic) =>
-                      CharacteristicTile(
-                    characteristic: characteristic,
-                    onReadPressed: () => characteristic.read(),
-                    onWritePressed: () =>
-                        characteristic.write(_getRandomBytes()),
-                    onNotificationPressed: () => characteristic
-                        .setNotifyValue(!characteristic.isNotifying),
-                    descriptorTiles: characteristic.descriptors
-                        .map(
-                          (BluetoothDescriptor descriptor) => DescriptorTile(
-                            descriptor: descriptor,
-                            onReadPressed: () => descriptor.read(),
-                            onWritePressed: () =>
-                                descriptor.write(_getRandomBytes()),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
-                .toList(),
-          ),
-        )
-        .toList();
+    return services.map(
+      (BluetoothService service) {
+        return ServiceTile(
+          service: service,
+          characteristicTiles: service.characteristics
+              .map(
+                (BluetoothCharacteristic characteristic) { return CharacteristicTile(
+                  characteristic: characteristic,
+                  onReadPressed: () => characteristic.read(),
+                  onWritePressed: () => characteristic.write(_getRandomBytes()),
+                  onNotificationPressed: () => characteristic
+                      .setNotifyValue(!characteristic.isNotifying),
+                  descriptorTiles: characteristic.descriptors.map(
+                    (BluetoothDescriptor descriptor) {
+                      return DescriptorTile(
+                        descriptor: descriptor,
+                        onReadPressed: () => descriptor.read(),
+                        onWritePressed: () =>
+                            descriptor.write(_getRandomBytes()),
+                      );
+                    },
+                  ).toList(),
+                );},
+              )
+              .toList(),
+        );
+      },
+    ).toList();
   }
 
   TextStyle _buildTextStyle(BuildContext context) {
