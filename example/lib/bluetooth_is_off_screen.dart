@@ -22,14 +22,23 @@ class BluetoothIsOffScreen extends StatelessWidget {
               color: Colors.white54,
             ),
             Text(
-              // Full String is: "Bluetooth Adapter is BluetoothState.off"
-              'Bluetooth Adapter is ${state.toString().substring(15)}.',
+              _getBluetoothStateString(state),
               style: _buildStyle(context),
             ),
           ],
         ),
       ),
     );
+  }
+
+  String _getBluetoothStateString(BluetoothState state) {
+    String stateString = 'Bluetooth Adapter is ';
+    if (state == BluetoothState.on) {
+      stateString += 'on.';
+    } else {
+      stateString += 'off.';
+    }
+    return stateString;
   }
 
   TextStyle _buildStyle(BuildContext context) {
