@@ -24,22 +24,25 @@ class DeviceScreen extends StatelessWidget {
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
     return services
         .map(
-          (s) => ServiceTile(
-            service: s,
-            characteristicTiles: s.characteristics
+          (BluetoothService service) => ServiceTile(
+            service: service,
+            characteristicTiles: service.characteristics
                 .map(
-                  (c) => CharacteristicTile(
-                    characteristic: c,
-                    onReadPressed: () => c.read(),
-                    onWritePressed: () => c.write(_getRandomBytes()),
-                    onNotificationPressed: () =>
-                        c.setNotifyValue(!c.isNotifying),
-                    descriptorTiles: c.descriptors
+                  (BluetoothCharacteristic characteristic) =>
+                      CharacteristicTile(
+                    characteristic: characteristic,
+                    onReadPressed: () => characteristic.read(),
+                    onWritePressed: () =>
+                        characteristic.write(_getRandomBytes()),
+                    onNotificationPressed: () => characteristic
+                        .setNotifyValue(!characteristic.isNotifying),
+                    descriptorTiles: characteristic.descriptors
                         .map(
-                          (d) => DescriptorTile(
-                            descriptor: d,
-                            onReadPressed: () => d.read(),
-                            onWritePressed: () => d.write(_getRandomBytes()),
+                          (BluetoothDescriptor descriptor) => DescriptorTile(
+                            descriptor: descriptor,
+                            onReadPressed: () => descriptor.read(),
+                            onWritePressed: () =>
+                                descriptor.write(_getRandomBytes()),
                           ),
                         )
                         .toList(),
@@ -60,7 +63,10 @@ class DeviceScreen extends StatelessWidget {
           StreamBuilder<BluetoothDeviceState>(
             stream: device.state,
             initialData: BluetoothDeviceState.connecting,
-            builder: (c, snapshot) {
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<BluetoothDeviceState> snapshot,
+            ) {
               VoidCallback onPressed;
               String text;
               switch (snapshot.data) {
@@ -78,14 +84,15 @@ class DeviceScreen extends StatelessWidget {
                   break;
               }
               return FlatButton(
-                  onPressed: onPressed,
-                  child: Text(
-                    text,
-                    style: Theme.of(context)
-                        .primaryTextTheme
-                        .button
-                        .copyWith(color: Colors.white),
-                  ));
+                onPressed: onPressed,
+                child: Text(
+                  text,
+                  style: Theme.of(context)
+                      .primaryTextTheme
+                      .button
+                      .copyWith(color: Colors.white),
+                ),
+              );
             },
           )
         ],
@@ -96,17 +103,25 @@ class DeviceScreen extends StatelessWidget {
             StreamBuilder<BluetoothDeviceState>(
               stream: device.state,
               initialData: BluetoothDeviceState.connecting,
-              builder: (c, snapshot) => ListTile(
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<BluetoothDeviceState> snapshot,
+              ) =>
+                  ListTile(
                 leading: (snapshot.data == BluetoothDeviceState.connected)
                     ? Icon(Icons.bluetooth_connected)
                     : Icon(Icons.bluetooth_disabled),
                 title: Text(
-                    'Device is ${snapshot.data.toString().split('.')[1]}.'),
+                    'Device is ${snapshot.data.toString().split('.')[1]}.',),
                 subtitle: Text('${device.id}'),
                 trailing: StreamBuilder<bool>(
                   stream: device.isDiscoveringServices,
                   initialData: false,
-                  builder: (c, snapshot) => IndexedStack(
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<bool> snapshot,
+                  ) =>
+                      IndexedStack(
                     index: snapshot.data ? 1 : 0,
                     children: <Widget>[
                       IconButton(
@@ -116,7 +131,8 @@ class DeviceScreen extends StatelessWidget {
                       IconButton(
                         icon: SizedBox(
                           child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(Colors.grey),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.grey),
                           ),
                           width: 18.0,
                           height: 18.0,
@@ -131,8 +147,12 @@ class DeviceScreen extends StatelessWidget {
             StreamBuilder<int>(
               stream: device.mtu,
               initialData: 0,
-              builder: (c, snapshot) => ListTile(
-                title: Text('MTU Size'),
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<int> snapshot,
+              ) =>
+                  ListTile(
+                title: const Text('MTU Size'),
                 subtitle: Text('${snapshot.data} bytes'),
                 trailing: IconButton(
                   icon: Icon(Icons.edit),
@@ -142,8 +162,11 @@ class DeviceScreen extends StatelessWidget {
             ),
             StreamBuilder<List<BluetoothService>>(
               stream: device.services,
-              initialData: [],
-              builder: (c, snapshot) {
+              initialData: <BluetoothService>[],
+              builder: (
+                BuildContext context,
+                AsyncSnapshot<List<BluetoothService>> snapshot,
+              ) {
                 return Column(
                   children: _buildServiceTiles(snapshot.data),
                 );
