@@ -122,7 +122,7 @@ class DeviceScreen extends StatelessWidget {
             ),
             StreamBuilder<List<BluetoothService>>(
               stream: device.services,
-              initialData: <BluetoothService>[],
+              initialData: const <BluetoothService>[],
               builder: (
                 BuildContext context,
                 AsyncSnapshot<List<BluetoothService>> snapshot,

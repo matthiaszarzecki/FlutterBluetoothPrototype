@@ -15,7 +15,7 @@ class ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (characteristicTiles.length > 0) {
+    if (characteristicTiles.isNotEmpty) {
       return ExpansionTile(
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,8 +41,9 @@ class ServiceTile extends StatelessWidget {
   }
 
   TextStyle _buildTextStyle(BuildContext context) {
-    return Theme.of(context).textTheme.body1.copyWith(
-          color: Theme.of(context).textTheme.caption.color
-        );
+    return Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(color: Theme.of(context).textTheme.caption.color);
   }
 }

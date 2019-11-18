@@ -14,14 +14,14 @@ class FindDevicesScreen extends StatelessWidget {
         title: const Text("Matthias' Bluetooth Devices"),
       ),
       body: RefreshIndicator(
-        onRefresh: _startScan,
+        onRefresh: _startScanRefresh,
         child: _buildDeviceList(context),
       ),
       floatingActionButton: _buildSearchForDevicesButton(),
     );
   }
 
-  Future<dynamic> _startScan() {
+  Future<dynamic> _startScanRefresh() {
     return FlutterBlue.instance.startScan(
       timeout: const Duration(seconds: 4),
     );
@@ -38,36 +38,38 @@ class FindDevicesScreen extends StatelessWidget {
                 Stream<dynamic>.periodic(const Duration(seconds: 2)).asyncMap(
               (dynamic _) => FlutterBlue.instance.connectedDevices,
             ),
-            initialData: <BluetoothDevice>[],
+            initialData: const <BluetoothDevice>[],
             builder: (
               BuildContext context,
               AsyncSnapshot<List<BluetoothDevice>> snapshot,
-            ) =>
-                Column(
-              children: snapshot.data
-                  .map(
-                    (BluetoothDevice device) =>
-                        _buildConnectedDeviceTile(device, context),
-                  )
-                  .toList(),
-            ),
+            ) {
+              return Column(
+                children: snapshot.data
+                    .map(
+                      (BluetoothDevice device) =>
+                          _buildConnectedDeviceTile(device, context),
+                    )
+                    .toList(),
+              );
+            },
           ),
           // List of unconnected Devices
           StreamBuilder<List<ScanResult>>(
             stream: FlutterBlue.instance.scanResults,
-            initialData: <ScanResult>[],
+            initialData: const <ScanResult>[],
             builder: (
               BuildContext context,
               AsyncSnapshot<List<ScanResult>> snapshot,
-            ) =>
-                Column(
-              children: snapshot.data
-                  .map(
-                    (ScanResult result) =>
-                        _buildScanResultTile(result, context),
-                  )
-                  .toList(),
-            ),
+            ) {
+              return Column(
+                children: snapshot.data
+                    .map(
+                      (ScanResult result) =>
+                          _buildScanResultTile(result, context),
+                    )
+                    .toList(),
+              );
+            },
           ),
         ],
       ),
@@ -89,15 +91,19 @@ class FindDevicesScreen extends StatelessWidget {
   }
 
   ListTile _buildConnectedDeviceTile(
-      BluetoothDevice device, BuildContext context) {
+    BluetoothDevice device,
+    BuildContext context,
+  ) {
     return ListTile(
       title: Text(device.name),
       subtitle: Text(device.id.toString()),
       trailing: StreamBuilder<BluetoothDeviceState>(
         stream: device.state,
         initialData: BluetoothDeviceState.disconnected,
-        builder: (BuildContext context,
-            AsyncSnapshot<BluetoothDeviceState> snapshot) {
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<BluetoothDeviceState> snapshot,
+        ) {
           if (snapshot.data == BluetoothDeviceState.connected) {
             return RaisedButton(
               child: const Text('OPEN'),
@@ -126,24 +132,24 @@ class FindDevicesScreen extends StatelessWidget {
         if (snapshot.data) {
           return FloatingActionButton(
             child: Icon(Icons.stop),
-            onPressed: _stopScan,
+            onPressed: _stopScanButton,
             backgroundColor: Colors.red,
           );
         } else {
           return FloatingActionButton(
             child: Icon(Icons.search),
-            onPressed: _startScan,
+            onPressed: _startScanButton,
           );
         }
       },
     );
   }
 
-  void _stopScan() {
+  void _stopScanButton() {
     FlutterBlue.instance.stopScan();
   }
 
-  void _startScan() {
+  void _startScanButton() {
     debugLog('Start Scan Pressed');
     FlutterBlue.instance.startScan(
       timeout: const Duration(seconds: 4),
