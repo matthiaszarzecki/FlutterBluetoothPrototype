@@ -21,26 +21,27 @@ class CharacteristicTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = Theme.of(context).iconTheme.color.withOpacity(0.5);
     return StreamBuilder<List<int>>(
       stream: characteristic.value,
       initialData: characteristic.lastValue,
-      builder: (c, snapshot) {
-        final value = snapshot.data;
+      builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+        final List<int> value = snapshot.data;
         return ExpansionTile(
           title: ListTile(
             title: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('Characteristic'),
+                const Text('Characteristic'),
                 Text(
-                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
-                    style: Theme.of(context).textTheme.body1.copyWith(
-                        color: Theme.of(context).textTheme.caption.color))
+                  '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
+                  style: _buildTextStyle(context),
+                )
               ],
             ),
             subtitle: Text(value.toString()),
-            contentPadding: EdgeInsets.all(0.0),
+            contentPadding: const EdgeInsets.all(0.0),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -48,21 +49,22 @@ class CharacteristicTile extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   Icons.file_download,
-                  color: Theme.of(context).iconTheme.color.withOpacity(0.5),
+                  color: iconColor,
                 ),
                 onPressed: onReadPressed,
               ),
               IconButton(
-                icon: Icon(Icons.file_upload,
-                    color: Theme.of(context).iconTheme.color.withOpacity(0.5)),
+                icon: Icon(
+                  Icons.file_upload,
+                  color: iconColor,
+                ),
                 onPressed: onWritePressed,
               ),
               IconButton(
                 icon: Icon(
-                    characteristic.isNotifying
-                        ? Icons.sync_disabled
-                        : Icons.sync,
-                    color: Theme.of(context).iconTheme.color.withOpacity(0.5)),
+                  characteristic.isNotifying ? Icons.sync_disabled : Icons.sync,
+                  color: iconColor,
+                ),
                 onPressed: onNotificationPressed,
               )
             ],
@@ -71,5 +73,12 @@ class CharacteristicTile extends StatelessWidget {
         );
       },
     );
+  }
+
+  TextStyle _buildTextStyle(BuildContext context) {
+    return Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(color: Theme.of(context).textTheme.caption.color);
   }
 }
