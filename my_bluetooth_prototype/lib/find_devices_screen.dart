@@ -11,7 +11,7 @@ class FindDevicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Devices'),
+        title: const Text("Matthias' Bluetooth Devices"),
       ),
       body: RefreshIndicator(
         onRefresh: () => FlutterBlue.instance.startScan(
