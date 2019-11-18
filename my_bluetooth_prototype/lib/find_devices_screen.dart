@@ -14,12 +14,16 @@ class FindDevicesScreen extends StatelessWidget {
         title: const Text("Matthias' Bluetooth Devices"),
       ),
       body: RefreshIndicator(
-        onRefresh: () => FlutterBlue.instance.startScan(
-          timeout: const Duration(seconds: 4),
-        ),
+        onRefresh: _startScan,
         child: _buildDeviceList(context),
       ),
       floatingActionButton: _buildSearchForDevicesButton(),
+    );
+  }
+
+  Future<dynamic> _startScan() {
+    return FlutterBlue.instance.startScan(
+      timeout: const Duration(seconds: 4),
     );
   }
 
