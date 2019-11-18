@@ -115,7 +115,10 @@ class FindDevicesScreen extends StatelessWidget {
     return StreamBuilder<bool>(
       stream: FlutterBlue.instance.isScanning,
       initialData: false,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot,) {
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<bool> snapshot,
+      ) {
         if (snapshot.data) {
           return FloatingActionButton(
             child: Icon(Icons.stop),

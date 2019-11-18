@@ -42,7 +42,7 @@ class ServiceTile extends StatelessWidget {
 
   TextStyle _buildTextStyle(BuildContext context) {
     return Theme.of(context).textTheme.body1.copyWith(
-          color: Theme.of(context).textTheme.caption.color,
+          color: Theme.of(context).textTheme.caption.color
         );
   }
 }

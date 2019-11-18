@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+/// A Display-Tile for a Bluetooth-Device that HAS NOT been
+/// previously Connected to the app.
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({
     Key key,
@@ -32,7 +34,7 @@ class ScanResultTile extends StatelessWidget {
     }
   }
 
-  Widget _buildAdvRow(BuildContext context, String title, String value) {
+  Widget _buildAdvRow(BuildContext context, String title, String value,) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Row(
