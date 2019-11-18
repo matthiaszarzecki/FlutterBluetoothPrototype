@@ -25,45 +25,57 @@ class DeviceScreen extends StatelessWidget {
               BuildContext context,
               AsyncSnapshot<BluetoothDeviceState> snapshot,
             ) {
-              VoidCallback onPressed;
-              String text;
-              switch (snapshot.data) {
-                case BluetoothDeviceState.connected:
-                  onPressed = () => device.disconnect();
-                  text = 'DISCONNECT';
-                  break;
-                case BluetoothDeviceState.disconnected:
-                  onPressed = () => device.connect();
-                  text = 'CONNECT';
-                  break;
-                default:
-                  onPressed = null;
-                  text = snapshot.data.toString().substring(21).toUpperCase();
-                  break;
-              }
-              // Connect / Disconnect Button
-              return FlatButton(
-                onPressed: onPressed,
-                child: Text(
-                  text,
-                  style: _buildTextStyle(context),
-                ),
-              );
+              return _buildConnectDisconnectButton(context, snapshot);
             },
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            StreamBuilder<BluetoothDeviceState>(
-              stream: device.state,
-              initialData: BluetoothDeviceState.connecting,
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<BluetoothDeviceState> snapshot,
-              ) =>
-                  ListTile(
+      body: _buildScrollView(),
+    );
+  }
+
+  // Connect / Disconnect Text-Button in the upper right corner
+  FlatButton _buildConnectDisconnectButton(
+    BuildContext context,
+    AsyncSnapshot<BluetoothDeviceState> snapshot,
+  ) {
+    VoidCallback onPressed;
+    String text;
+    switch (snapshot.data) {
+      case BluetoothDeviceState.connected:
+        onPressed = () => device.disconnect();
+        text = 'DISCONNECT DEV.';
+        break;
+      case BluetoothDeviceState.disconnected:
+        onPressed = () => device.connect();
+        text = 'CONNECT DEV.';
+        break;
+      default:
+        onPressed = null;
+        text = snapshot.data.toString().substring(21).toUpperCase();
+        break;
+    }
+    return FlatButton(
+      onPressed: onPressed,
+      child: Text(
+        text,
+        style: _buildTextStyle(context),
+      ),
+    );
+  }
+
+  SingleChildScrollView _buildScrollView() {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          StreamBuilder<BluetoothDeviceState>(
+            stream: device.state,
+            initialData: BluetoothDeviceState.connecting,
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<BluetoothDeviceState> snapshot,
+            ) {
+              return ListTile(
                 // Bluetooth active/inactive icon
                 leading: (snapshot.data == BluetoothDeviceState.connected)
                     ? Icon(Icons.bluetooth_connected)
@@ -80,60 +92,62 @@ class DeviceScreen extends StatelessWidget {
                   builder: (
                     BuildContext context,
                     AsyncSnapshot<bool> snapshot,
-                  ) =>
-                      IndexedStack(
-                    index: snapshot.data ? 1 : 0,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () => device.discoverServices(),
-                      ),
-                      IconButton(
-                        icon: SizedBox(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.grey),
-                          ),
-                          width: 18.0,
-                          height: 18.0,
+                  ) {
+                    return IndexedStack(
+                      index: snapshot.data ? 1 : 0,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.refresh),
+                          onPressed: () => device.discoverServices(),
                         ),
-                        onPressed: null,
-                      )
-                    ],
-                  ),
+                        IconButton(
+                          icon: SizedBox(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.grey),
+                            ),
+                            width: 18.0,
+                            height: 18.0,
+                          ),
+                          onPressed: null,
+                        )
+                      ],
+                    );
+                  },
                 ),
-              ),
-            ),
-            StreamBuilder<int>(
-              stream: device.mtu,
-              initialData: 0,
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<int> snapshot,
-              ) =>
-                  ListTile(
+              );
+            },
+          ),
+          StreamBuilder<int>(
+            stream: device.mtu,
+            initialData: 0,
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<int> snapshot,
+            ) {
+              return ListTile(
                 title: const Text('MTU Size'),
                 subtitle: Text('${snapshot.data} bytes'),
                 trailing: IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () => device.requestMtu(223),
                 ),
-              ),
-            ),
-            StreamBuilder<List<BluetoothService>>(
-              stream: device.services,
-              initialData: const <BluetoothService>[],
-              builder: (
-                BuildContext context,
-                AsyncSnapshot<List<BluetoothService>> snapshot,
-              ) {
-                return Column(
-                  children: _buildServiceTiles(snapshot.data),
-                );
-              },
-            ),
-          ],
-        ),
+              );
+            },
+          ),
+          StreamBuilder<List<BluetoothService>>(
+            stream: device.services,
+            initialData: const <BluetoothService>[],
+            builder: (
+              BuildContext context,
+              AsyncSnapshot<List<BluetoothService>> snapshot,
+            ) {
+              return Column(
+                children: _buildServiceTiles(snapshot.data),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -153,27 +167,26 @@ class DeviceScreen extends StatelessWidget {
       (BluetoothService service) {
         return ServiceTile(
           service: service,
-          characteristicTiles: service.characteristics
-              .map(
-                (BluetoothCharacteristic characteristic) { return CharacteristicTile(
-                  characteristic: characteristic,
-                  onReadPressed: () => characteristic.read(),
-                  onWritePressed: () => characteristic.write(_getRandomBytes()),
-                  onNotificationPressed: () => characteristic
-                      .setNotifyValue(!characteristic.isNotifying),
-                  descriptorTiles: characteristic.descriptors.map(
-                    (BluetoothDescriptor descriptor) {
-                      return DescriptorTile(
-                        descriptor: descriptor,
-                        onReadPressed: () => descriptor.read(),
-                        onWritePressed: () =>
-                            descriptor.write(_getRandomBytes()),
-                      );
-                    },
-                  ).toList(),
-                );},
-              )
-              .toList(),
+          characteristicTiles: service.characteristics.map(
+            (BluetoothCharacteristic characteristic) {
+              return CharacteristicTile(
+                characteristic: characteristic,
+                onReadPressed: () => characteristic.read(),
+                onWritePressed: () => characteristic.write(_getRandomBytes()),
+                onNotificationPressed: () =>
+                    characteristic.setNotifyValue(!characteristic.isNotifying),
+                descriptorTiles: characteristic.descriptors.map(
+                  (BluetoothDescriptor descriptor) {
+                    return DescriptorTile(
+                      descriptor: descriptor,
+                      onReadPressed: () => descriptor.read(),
+                      onWritePressed: () => descriptor.write(_getRandomBytes()),
+                    );
+                  },
+                ).toList(),
+              );
+            },
+          ).toList(),
         );
       },
     ).toList();
