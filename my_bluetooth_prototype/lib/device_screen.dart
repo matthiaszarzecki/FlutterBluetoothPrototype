@@ -3,6 +3,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter/material.dart';
 
 import 'package:my_bluetooth_prototype/characteristic_tile.dart';
+import 'package:my_bluetooth_prototype/debug.dart';
 import 'package:my_bluetooth_prototype/descriptor_tile.dart';
 import 'package:my_bluetooth_prototype/service_tile.dart';
 
@@ -47,12 +48,12 @@ class DeviceScreen extends StatelessWidget {
     String text;
     switch (snapshot.data) {
       case BluetoothDeviceState.connected:
-        onPressed = device.disconnect;
-        text = 'DISCONNECT DEV.';
+        onPressed = () => _deviceDisconnect(device);
+        text = 'DISCONNECT Device';
         break;
       case BluetoothDeviceState.disconnected:
-        onPressed = device.connect;
-        text = 'CONNECT DEV.';
+        onPressed = () => _deviceConnect(device);
+        text = 'CONNECT Device';
         break;
       default:
         onPressed = null;
@@ -66,6 +67,16 @@ class DeviceScreen extends StatelessWidget {
         style: _buildTextStyle(context),
       ),
     );
+  }
+
+  void _deviceConnect(BluetoothDevice device) {
+    debugLog('CONNECT Device');
+    device.connect();
+  }
+
+  void _deviceDisconnect(BluetoothDevice device) {
+    debugLog('DISCONNECT Device');
+    device.disconnect();
   }
 
   SingleChildScrollView _buildScrollView() {
@@ -99,7 +110,7 @@ class DeviceScreen extends StatelessWidget {
     );
   }
 
-  // Build a single tile with the MTU & Edit-Button
+  // Build a single tile with the MTU Unit Size (Maximum Transmission Unit) & Edit-Button
   StreamBuilder<int> _buildMTUTile() {
     return StreamBuilder<int>(
       stream: device.mtu,
@@ -113,11 +124,16 @@ class DeviceScreen extends StatelessWidget {
           subtitle: Text('${snapshot.data} bytes'),
           trailing: IconButton(
             icon: Icon(Icons.edit),
-            onPressed: () => device.requestMtu(223),
+            onPressed: _requestMTUSize,
           ),
         );
       },
     );
+  }
+
+  void _requestMTUSize() {
+    debugLog('Requested MTU Size Change to 223 Bytes');
+    device.requestMtu(223);
   }
 
   // Build tiles with Available Bluetooth-Characteristics
@@ -153,7 +169,7 @@ class DeviceScreen extends StatelessWidget {
   }
 
   Text _buildDeviceIDSubtitle(BluetoothDevice device) {
-    return Text('${device.id}');
+    return Text('ID: ${device.id}');
   }
 
   StreamBuilder<bool> _buildRefreshConnectionButton() {
@@ -169,7 +185,7 @@ class DeviceScreen extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
-              onPressed: device.discoverServices,
+              onPressed: () => _discoverServices(),
             ),
             IconButton(
               icon: SizedBox(
@@ -187,6 +203,15 @@ class DeviceScreen extends StatelessWidget {
     );
   }
 
+  Future<List<BluetoothService>> _discoverServices() {
+    debugLog('Discovering Services');
+    return device.discoverServices();
+  }
+
+  List<int> _getUnlockCode() {
+    return <int>[1, 2, 3, 4, 0, 0];
+  }
+
   List<int> _getRandomBytes() {
     final Random random = Random();
     return <int>[
@@ -198,6 +223,7 @@ class DeviceScreen extends StatelessWidget {
   }
 
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
+    debugLog('Available Services: ${services.length}');
     return services.map(
       (BluetoothService service) {
         return ServiceTile(
@@ -206,22 +232,53 @@ class DeviceScreen extends StatelessWidget {
             (BluetoothCharacteristic characteristic) {
               return CharacteristicTile(
                 characteristic: characteristic,
-                onReadPressed: () => characteristic.read(),
-                onWritePressed: () => characteristic.write(_getRandomBytes()),
+                onReadPressed: () => _onReadPressed(characteristic),
+                onWritePressed: () => _onWritePressed(
+                  characteristic,
+                  _getUnlockCode(),
+                ),
                 onNotificationPressed: () =>
-                    characteristic.setNotifyValue(!characteristic.isNotifying),
-                descriptorTiles: characteristic.descriptors.map(
-                  (BluetoothDescriptor descriptor) {
-                    return DescriptorTile(
-                      descriptor: descriptor,
-                      onReadPressed: () => descriptor.read(),
-                      onWritePressed: () => descriptor.write(_getRandomBytes()),
-                    );
-                  },
-                ).toList(),
+                    _onNotificationPressed(characteristic),
+                descriptorTiles: _buildDescriptorTiles(characteristic),
               );
             },
           ).toList(),
+        );
+      },
+    ).toList();
+  }
+
+  void _onReadPressed(BluetoothCharacteristic characteristic) {
+    debugLog('READ CHARACTERISTIC');
+    debugLogCharacteristics(characteristic);
+    characteristic.read();
+  }
+
+  void _onWritePressed(
+    BluetoothCharacteristic characteristic,
+    List<int> payload,
+  ) {
+    debugLog('WRITE CHARACTERISTIC');
+    debugLog(payload.toString());
+    debugLogCharacteristics(characteristic);
+    characteristic.write(payload);
+  }
+
+  void _onNotificationPressed(BluetoothCharacteristic characteristic) {
+    debugLog('NOTIFICATION CHARACTERISTIC');
+    debugLogCharacteristics(characteristic);
+    characteristic.setNotifyValue(!characteristic.isNotifying);
+  }
+
+  List<DescriptorTile> _buildDescriptorTiles(
+    BluetoothCharacteristic characteristic,
+  ) {
+    return characteristic.descriptors.map(
+      (BluetoothDescriptor descriptor) {
+        return DescriptorTile(
+          descriptor: descriptor,
+          onReadPressed: () => descriptor.read(),
+          onWritePressed: () => descriptor.write(_getRandomBytes()),
         );
       },
     ).toList();

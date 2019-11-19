@@ -27,7 +27,7 @@ class FindDevicesScreen extends StatelessWidget {
     );
   }
 
-  // A Scrollview with all discovered Bluetooth-Devices
+  // A Scrollview with all available Bluetooth-Devices
   SingleChildScrollView _buildDeviceList(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -74,11 +74,11 @@ class FindDevicesScreen extends StatelessWidget {
         AsyncSnapshot<List<ScanResult>> snapshot,
       ) {
         return Column(
-          children: snapshot.data
-              .map(
-                (ScanResult result) { return _buildScanResultTile(result, context);},
-              )
-              .toList(),
+          children: snapshot.data.map(
+            (ScanResult result) {
+              return _buildScanResultTile(result, context);
+            },
+          ).toList(),
         );
       },
     );
