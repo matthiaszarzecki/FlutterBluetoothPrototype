@@ -92,6 +92,7 @@ class ScanResultTile extends StatelessWidget {
     }
   }
 
+  // An Advertising is information the device is broadcasting, like Name, ID
   Widget _buildAdvertisingRow(
     BuildContext context,
     String title,
