@@ -13,6 +13,51 @@ class ScanResultTile extends StatelessWidget {
   final ScanResult result;
   final VoidCallback onTap;
 
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      title: _buildTitle(context),
+      leading: Text(result.rssi.toString()),
+      trailing: RaisedButton(
+        child: const Text('CONNECT'),
+        color: Colors.black,
+        textColor: Colors.white,
+        onPressed: (result.advertisementData.connectable) ? onTap : null,
+      ),
+      children: <Widget>[
+        _buildAdvRow(
+          context,
+          'Complete Local Name',
+          result.advertisementData.localName,
+        ),
+        _buildAdvRow(
+          context,
+          'Tx Power Level',
+          '${result.advertisementData.txPowerLevel ?? 'N/A'}',
+        ),
+        _buildAdvRow(
+          context,
+          'Manufacturer Data',
+          getNiceManufacturerData(result.advertisementData.manufacturerData) ??
+              'N/A',
+        ),
+        _buildAdvRow(
+          context,
+          'Service UUIDs',
+          (result.advertisementData.serviceUuids.isNotEmpty)
+              ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
+              : 'N/A',
+        ),
+        _buildAdvRow(
+          context,
+          'Service Data',
+          getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A',
+        ),
+      ],
+    );
+  }
+
   Widget _buildTitle(BuildContext context) {
     if (result.device.name.isNotEmpty) {
       return Column(
@@ -93,49 +138,5 @@ class ScanResultTile extends StatelessWidget {
       },
     );
     return res.join(', ');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: _buildTitle(context),
-      leading: Text(result.rssi.toString()),
-      trailing: RaisedButton(
-        child: const Text('CONNECT'),
-        color: Colors.black,
-        textColor: Colors.white,
-        onPressed: (result.advertisementData.connectable) ? onTap : null,
-      ),
-      children: <Widget>[
-        _buildAdvRow(
-          context,
-          'Complete Local Name',
-          result.advertisementData.localName,
-        ),
-        _buildAdvRow(
-          context,
-          'Tx Power Level',
-          '${result.advertisementData.txPowerLevel ?? 'N/A'}',
-        ),
-        _buildAdvRow(
-          context,
-          'Manufacturer Data',
-          getNiceManufacturerData(result.advertisementData.manufacturerData) ??
-              'N/A',
-        ),
-        _buildAdvRow(
-          context,
-          'Service UUIDs',
-          (result.advertisementData.serviceUuids.isNotEmpty)
-              ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
-              : 'N/A',
-        ),
-        _buildAdvRow(
-          context,
-          'Service Data',
-          getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A',
-        ),
-      ],
-    );
   }
 }
