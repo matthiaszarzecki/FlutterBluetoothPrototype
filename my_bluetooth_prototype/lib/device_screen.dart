@@ -15,22 +15,26 @@ class DeviceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(device.name),
-        actions: <Widget>[
-          StreamBuilder<BluetoothDeviceState>(
-            stream: device.state,
-            initialData: BluetoothDeviceState.connecting,
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<BluetoothDeviceState> snapshot,
-            ) {
-              return _buildConnectDisconnectButton(context, snapshot);
-            },
-          )
-        ],
-      ),
+      appBar: _buildAppBar(),
       body: _buildScrollView(),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      title: Text(device.name),
+      actions: <Widget>[
+        StreamBuilder<BluetoothDeviceState>(
+          stream: device.state,
+          initialData: BluetoothDeviceState.connecting,
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<BluetoothDeviceState> snapshot,
+          ) {
+            return _buildConnectDisconnectButton(context, snapshot);
+          },
+        )
+      ],
     );
   }
 
@@ -68,52 +72,67 @@ class DeviceScreen extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          StreamBuilder<BluetoothDeviceState>(
-            stream: device.state,
-            initialData: BluetoothDeviceState.connecting,
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<BluetoothDeviceState> snapshot,
-            ) {
-              return ListTile(
-                leading: _buildBluetoothConnectedDisabledIcon(snapshot),
-                title: _buildDeviceConnectedHeader(snapshot),
-                subtitle: _buildDeviceIDSubtitle(device),
-                trailing: _buildRefreshConnectionButton(),
-              );
-            },
-          ),
-          StreamBuilder<int>(
-            stream: device.mtu,
-            initialData: 0,
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<int> snapshot,
-            ) {
-              return ListTile(
-                title: const Text('MTU Size'),
-                subtitle: Text('${snapshot.data} bytes'),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => device.requestMtu(223),
-                ),
-              );
-            },
-          ),
-          StreamBuilder<List<BluetoothService>>(
-            stream: device.services,
-            initialData: const <BluetoothService>[],
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<List<BluetoothService>> snapshot,
-            ) {
-              return Column(
-                children: _buildServiceTiles(snapshot.data),
-              );
-            },
-          ),
+          _buildBluetoothInfoTile(),
+          _buildMTUTile(),
+          _buildCharacteristicTiles(),
         ],
       ),
+    );
+  }
+
+  // Build a single tile with Bluetooth-connection icon, Device-Name, Device-ID, Refresh-Button
+  StreamBuilder<BluetoothDeviceState> _buildBluetoothInfoTile() {
+    return StreamBuilder<BluetoothDeviceState>(
+      stream: device.state,
+      initialData: BluetoothDeviceState.connecting,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<BluetoothDeviceState> snapshot,
+      ) {
+        return ListTile(
+          leading: _buildBluetoothConnectedDisabledIcon(snapshot),
+          title: _buildDeviceConnectedHeader(snapshot),
+          subtitle: _buildDeviceIDSubtitle(device),
+          trailing: _buildRefreshConnectionButton(),
+        );
+      },
+    );
+  }
+
+  // Build a single tile with the MTU & Edit-Button
+  StreamBuilder<int> _buildMTUTile() {
+    return StreamBuilder<int>(
+      stream: device.mtu,
+      initialData: 0,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<int> snapshot,
+      ) {
+        return ListTile(
+          title: const Text('MTU Size'),
+          subtitle: Text('${snapshot.data} bytes'),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => device.requestMtu(223),
+          ),
+        );
+      },
+    );
+  }
+
+  // Build tiles with Available Bluetooth-Characteristics
+  StreamBuilder<List<BluetoothService>> _buildCharacteristicTiles() {
+    return StreamBuilder<List<BluetoothService>>(
+      stream: device.services,
+      initialData: const <BluetoothService>[],
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<List<BluetoothService>> snapshot,
+      ) {
+        return Column(
+          children: _buildServiceTiles(snapshot.data),
+        );
+      },
     );
   }
 
