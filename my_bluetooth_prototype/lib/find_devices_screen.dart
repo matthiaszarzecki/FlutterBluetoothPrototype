@@ -76,7 +76,7 @@ class FindDevicesScreen extends StatelessWidget {
         return Column(
           children: snapshot.data
               .map(
-                (ScanResult result) => _buildScanResultTile(result, context),
+                (ScanResult result) { return _buildScanResultTile(result, context);},
               )
               .toList(),
         );
@@ -87,14 +87,16 @@ class FindDevicesScreen extends StatelessWidget {
   ScanResultTile _buildScanResultTile(ScanResult result, BuildContext context) {
     return ScanResultTile(
       result: result,
-      onTap: () => Navigator.of(context).push<dynamic>(
-        MaterialPageRoute<dynamic>(
-          builder: (BuildContext context) {
-            result.device.connect();
-            return DeviceScreen(device: result.device);
-          },
-        ),
-      ),
+      onTap: () {
+        Navigator.of(context).push<dynamic>(
+          MaterialPageRoute<dynamic>(
+            builder: (BuildContext context) {
+              result.device.connect();
+              return DeviceScreen(device: result.device);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -115,13 +117,15 @@ class FindDevicesScreen extends StatelessWidget {
           if (snapshot.data == BluetoothDeviceState.connected) {
             return RaisedButton(
               child: const Text('OPEN'),
-              onPressed: () => Navigator.of(context).push<dynamic>(
-                MaterialPageRoute<dynamic>(
-                  builder: (BuildContext context) {
-                    return DeviceScreen(device: device);
-                  },
-                ),
-              ),
+              onPressed: () {
+                Navigator.of(context).push<dynamic>(
+                  MaterialPageRoute<dynamic>(
+                    builder: (BuildContext context) {
+                      return DeviceScreen(device: device);
+                    },
+                  ),
+                );
+              },
             );
           }
           return Text(snapshot.data.toString());

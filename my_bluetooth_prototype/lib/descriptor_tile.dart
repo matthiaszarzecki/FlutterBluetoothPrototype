@@ -31,8 +31,8 @@ class DescriptorTile extends StatelessWidget {
       subtitle: StreamBuilder<List<int>>(
         stream: descriptor.value,
         initialData: descriptor.lastValue,
-        builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) =>
-            Text(snapshot.data.toString()),
+        builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) { return
+            Text(snapshot.data.toString());},
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

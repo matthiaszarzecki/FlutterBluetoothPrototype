@@ -47,11 +47,11 @@ class DeviceScreen extends StatelessWidget {
     String text;
     switch (snapshot.data) {
       case BluetoothDeviceState.connected:
-        onPressed = () => device.disconnect();
+        onPressed = device.disconnect;
         text = 'DISCONNECT DEV.';
         break;
       case BluetoothDeviceState.disconnected:
-        onPressed = () => device.connect();
+        onPressed = device.connect;
         text = 'CONNECT DEV.';
         break;
       default:
@@ -169,7 +169,7 @@ class DeviceScreen extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
-              onPressed: () => device.discoverServices(),
+              onPressed: device.discoverServices,
             ),
             IconButton(
               icon: SizedBox(
