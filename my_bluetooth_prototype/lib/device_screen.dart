@@ -209,7 +209,11 @@ class DeviceScreen extends StatelessWidget {
   }
 
   List<int> _getUnlockCode() {
-    return <int>[1, 2, 3, 4, 0, 0];
+    // Create unlock code as array of ints representing the characters
+    // as ascii-codes in hexadecimal, followed by the unlock-mode (default 31).
+    // 1, 2, 3, 4, 0, 0
+    // -> 31, 32, 33, 34, 30, 30, 31
+    return <int>[31, 32, 33, 34, 30, 30, 31];
   }
 
   List<int> _getRandomBytes() {

@@ -38,7 +38,7 @@ class CharacteristicTile extends StatelessWidget {
               children: <Widget>[
                 const Text('Characteristic'),
                 Text(
-                  '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',
+                  '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${characteristic.uuid.toString().toUpperCase()}',
                   style: _buildTextStyle(context),
                 )
               ],

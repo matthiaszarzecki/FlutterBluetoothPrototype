@@ -23,7 +23,7 @@ class DescriptorTile extends StatelessWidget {
         children: <Widget>[
           const Text('Descriptor'),
           Text(
-            '0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}',
+            '0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${descriptor.uuid.toString().toUpperCase()}',
             style: _buildTextStyle(context),
           )
         ],

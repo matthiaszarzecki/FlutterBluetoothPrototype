@@ -23,7 +23,7 @@ class ServiceTile extends StatelessWidget {
           children: <Widget>[
             const Text('Service'),
             Text(
-              '0x${service.uuid.toString().toUpperCase().substring(4, 8)}',
+              '0x${service.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${service.uuid.toString().toUpperCase()}',
               style: _buildTextStyle(context),
             )
           ],
