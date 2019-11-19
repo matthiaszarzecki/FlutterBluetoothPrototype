@@ -25,30 +25,30 @@ class ScanResultTile extends StatelessWidget {
 
   List<Widget> _buildExpandableInformation(BuildContext context) {
     return <Widget>[
-      _buildAdvRow(
+      _buildAdvertisingRow(
         context,
         'Complete Local Name',
         result.advertisementData.localName,
       ),
-      _buildAdvRow(
+      _buildAdvertisingRow(
         context,
         'Tx Power Level',
         '${result.advertisementData.txPowerLevel ?? 'N/A'}',
       ),
-      _buildAdvRow(
+      _buildAdvertisingRow(
         context,
         'Manufacturer Data',
         getNiceManufacturerData(result.advertisementData.manufacturerData) ??
             'N/A',
       ),
-      _buildAdvRow(
+      _buildAdvertisingRow(
         context,
         'Service UUIDs',
         (result.advertisementData.serviceUuids.isNotEmpty)
             ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
             : 'N/A',
       ),
-      _buildAdvRow(
+      _buildAdvertisingRow(
         context,
         'Service Data',
         getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A',
@@ -92,7 +92,7 @@ class ScanResultTile extends StatelessWidget {
     }
   }
 
-  Widget _buildAdvRow(
+  Widget _buildAdvertisingRow(
     BuildContext context,
     String title,
     String value,
