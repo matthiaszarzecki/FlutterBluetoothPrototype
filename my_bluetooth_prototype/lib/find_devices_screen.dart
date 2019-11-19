@@ -67,22 +67,21 @@ class FindDevicesScreen extends StatelessWidget {
 
   StreamBuilder<List<ScanResult>> _buildListOfUnconnectedDevices() {
     return StreamBuilder<List<ScanResult>>(
-            stream: FlutterBlue.instance.scanResults,
-            initialData: const <ScanResult>[],
-            builder: (
-              BuildContext context,
-              AsyncSnapshot<List<ScanResult>> snapshot,
-            ) {
-              return Column(
-                children: snapshot.data
-                    .map(
-                      (ScanResult result) =>
-                          _buildScanResultTile(result, context),
-                    )
-                    .toList(),
-              );
-            },
-          );
+      stream: FlutterBlue.instance.scanResults,
+      initialData: const <ScanResult>[],
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<List<ScanResult>> snapshot,
+      ) {
+        return Column(
+          children: snapshot.data
+              .map(
+                (ScanResult result) => _buildScanResultTile(result, context),
+              )
+              .toList(),
+        );
+      },
+    );
   }
 
   ScanResultTile _buildScanResultTile(ScanResult result, BuildContext context) {
