@@ -13,52 +13,65 @@ class ScanResultTile extends StatelessWidget {
   final ScanResult result;
   final VoidCallback onTap;
 
-
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: _buildTitle(context),
-      leading: Text(result.rssi.toString()),
-      trailing: RaisedButton(
-        child: const Text('CONNECT'),
-        color: Colors.black,
-        textColor: Colors.white,
-        onPressed: (result.advertisementData.connectable) ? onTap : null,
-      ),
-      children: <Widget>[
-        _buildAdvRow(
-          context,
-          'Complete Local Name',
-          result.advertisementData.localName,
-        ),
-        _buildAdvRow(
-          context,
-          'Tx Power Level',
-          '${result.advertisementData.txPowerLevel ?? 'N/A'}',
-        ),
-        _buildAdvRow(
-          context,
-          'Manufacturer Data',
-          getNiceManufacturerData(result.advertisementData.manufacturerData) ??
-              'N/A',
-        ),
-        _buildAdvRow(
-          context,
-          'Service UUIDs',
-          (result.advertisementData.serviceUuids.isNotEmpty)
-              ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
-              : 'N/A',
-        ),
-        _buildAdvRow(
-          context,
-          'Service Data',
-          getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A',
-        ),
-      ],
+      title: _buildNameAndIDDisplay(context),
+      leading: _buildSignalStrengthDisplay(result),
+      trailing: _buildConnectButton(),
+      children: _buildExpandableInformation(context),
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
+  List<Widget> _buildExpandableInformation(BuildContext context) {
+    return <Widget>[
+      _buildAdvRow(
+        context,
+        'Complete Local Name',
+        result.advertisementData.localName,
+      ),
+      _buildAdvRow(
+        context,
+        'Tx Power Level',
+        '${result.advertisementData.txPowerLevel ?? 'N/A'}',
+      ),
+      _buildAdvRow(
+        context,
+        'Manufacturer Data',
+        getNiceManufacturerData(result.advertisementData.manufacturerData) ??
+            'N/A',
+      ),
+      _buildAdvRow(
+        context,
+        'Service UUIDs',
+        (result.advertisementData.serviceUuids.isNotEmpty)
+            ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
+            : 'N/A',
+      ),
+      _buildAdvRow(
+        context,
+        'Service Data',
+        getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A',
+      ),
+    ];
+  }
+
+  RaisedButton _buildConnectButton() {
+    return RaisedButton(
+      child: const Text('CONNECT'),
+      color: Colors.black,
+      textColor: Colors.white,
+      onPressed: (result.advertisementData.connectable) ? onTap : null,
+    );
+  }
+
+  Text _buildSignalStrengthDisplay(ScanResult result) {
+    // "-81" numbers of left side of tile
+    // RSSI "Received Signal Strength Indication" - The strength of the connectionx
+    return Text(result.rssi.toString());
+  }
+
+  Widget _buildNameAndIDDisplay(BuildContext context) {
     if (result.device.name.isNotEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
