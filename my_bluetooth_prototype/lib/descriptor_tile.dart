@@ -16,43 +16,46 @@ class DescriptorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color iconColor = Theme.of(context).iconTheme.color.withOpacity(0.5);
-    return ListTile(
-      title: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('Descriptor'),
-          Text(
-            '0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${descriptor.uuid.toString().toUpperCase()}',
-            style: _buildTextStyle(context),
-          )
-        ],
-      ),
-      subtitle: StreamBuilder<List<int>>(
-        stream: descriptor.value,
-        initialData: descriptor.lastValue,
-        builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
-          return Text(snapshot.data.toString());
-        },
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.file_download,
-              color: iconColor,
+    return Container(
+      color: Colors.red[100],
+      child: ListTile(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text('Descriptor'),
+            Text(
+              '0x${descriptor.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${descriptor.uuid.toString().toUpperCase()}',
+              style: _buildTextStyle(context),
+            )
+          ],
+        ),
+        subtitle: StreamBuilder<List<int>>(
+          stream: descriptor.value,
+          initialData: descriptor.lastValue,
+          builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+            return Text(snapshot.data.toString());
+          },
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.file_download,
+                color: iconColor,
+              ),
+              onPressed: onReadPressed,
             ),
-            onPressed: onReadPressed,
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.file_upload,
-              color: iconColor,
-            ),
-            onPressed: onWritePressed,
-          )
-        ],
+            IconButton(
+              icon: Icon(
+                Icons.file_upload,
+                color: iconColor,
+              ),
+              onPressed: onWritePressed,
+            )
+          ],
+        ),
       ),
     );
   }

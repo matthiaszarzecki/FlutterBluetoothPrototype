@@ -22,59 +22,73 @@ class CharacteristicTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color iconColor = Theme.of(context).iconTheme.color.withOpacity(0.5);
-    return StreamBuilder<List<int>>(
-      stream: characteristic.value,
-      initialData: characteristic.lastValue,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<List<int>> snapshot,
-      ) {
-        final List<int> value = snapshot.data;
-        return ExpansionTile(
-          title: ListTile(
-            title: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      color: Colors.red[200],
+      child: StreamBuilder<List<int>>(
+        stream: characteristic.value,
+        initialData: characteristic.lastValue,
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<List<int>> snapshot,
+        ) {
+          final List<int> value = snapshot.data;
+          return ExpansionTile(
+            title: ListTile(
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Text('Characteristic'),
+                  Text(
+                    '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${characteristic.uuid.toString().toUpperCase()}',
+                    style: _buildTextStyle(context),
+                  )
+                ],
+              ),
+              subtitle: Text(value.toString()),
+              contentPadding: const EdgeInsets.all(0.0),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const Text('Characteristic'),
-                Text(
-                  '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}, UUID: ${characteristic.uuid.toString().toUpperCase()}',
-                  style: _buildTextStyle(context),
+                IconButton(
+                  icon: Icon(
+                    Icons.file_download,
+                    color: iconColor,
+                  ),
+                  onPressed: onReadPressed,
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.file_upload,
+                    color: iconColor,
+                  ),
+                  onPressed: onWritePressed,
+                ),
+                IconButton(
+                  icon: Icon(
+                    characteristic.isNotifying
+                        ? Icons.sync_disabled
+                        : Icons.sync,
+                    color: iconColor,
+                  ),
+                  onPressed: onNotificationPressed,
+                ),
+                IconButton(
+                  icon: Icon(
+                    characteristic.isNotifying
+                        ? Icons.sync_disabled
+                        : Icons.sync,
+                    color: iconColor,
+                  ),
+                  onPressed: onNotificationPressed,
                 )
               ],
             ),
-            subtitle: Text(value.toString()),
-            contentPadding: const EdgeInsets.all(0.0),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.file_download,
-                  color: iconColor,
-                ),
-                onPressed: onReadPressed,
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.file_upload,
-                  color: iconColor,
-                ),
-                onPressed: onWritePressed,
-              ),
-              IconButton(
-                icon: Icon(
-                  characteristic.isNotifying ? Icons.sync_disabled : Icons.sync,
-                  color: iconColor,
-                ),
-                onPressed: onNotificationPressed,
-              )
-            ],
-          ),
-          children: descriptorTiles,
-        );
-      },
+            children: descriptorTiles,
+          );
+        },
+      ),
     );
   }
 
